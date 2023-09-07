@@ -1,0 +1,19 @@
+WALL = '+'  # wall
+SPRITE = 'i'  # player
+SPRITE_T = 'I'  # player on target
+
+EMPTY = ' '  # space
+TARGET = 'o'  # target
+BOX_NS = '!'  # box
+BOX_S = '.'  # box on target
+
+RESTART = ' '
+QUIT = 'q'
+
+CONTROLS = "wasd q"
+
+board = [
+    [WALL, WALL, WALL, WALL, WALL, WALL],
+    [WALL, TARGET, EMPTY, BOX_NS, SPRITE, WALL],
+    [WALL, WALL, WALL, WALL, WALL, WALL]
+]
