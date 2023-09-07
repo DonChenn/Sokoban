@@ -1,0 +1,182 @@
+from game_settings import *
+import copy
+
+
+def new_board():
+    """Reset board."""
+    backup_static_board_layer = []
+    backup_moving_board_layer = []
+    for row in board:
+        backup_static_row = []
+        backup_move_row = []
+        for tile in row:
+            if tile == WALL:
+                backup_static_row.append(WALL)
+            elif tile == TARGET or tile == BOX_S:
+                backup_static_row.append(TARGET)
+            else:
+                backup_static_row.append(EMPTY)
+
+            if tile == SPRITE or tile == SPRITE_T:
+                backup_move_row.append(SPRITE)
+            elif tile == BOX_NS or tile == BOX_S:
+                backup_move_row.append(BOX_NS)
+            else:
+                backup_move_row.append(EMPTY)
+        backup_static_board_layer.append(backup_static_row)
+        backup_moving_board_layer.append(backup_move_row)
+
+    global static_board
+    global moving_board
+    static_board = copy.deepcopy(backup_static_board_layer)
+    moving_board = copy.deepcopy(backup_moving_board_layer)
+
+
+def print_current_board():
+    """Print game board."""
+    global results
+    results = []
+    for y in range(len(static_board)):
+        for x in range(len(static_board[y])):
+            row = static_board[y]
+            ending = ' '
+            if x + 1 == len(row):
+                ending = ''
+            if moving_board[y][x] != EMPTY:
+                if moving_board[y][x] == BOX_NS and static_board[y][x] == TARGET:
+                    value_to_print = BOX_S
+                elif moving_board[y][x] == SPRITE and static_board[y][x] == TARGET:
+                    value_to_print = SPRITE_T
+                else:
+                    value_to_print = moving_board[y][x]
+            else:
+                value_to_print = static_board[y][x]
+            results.append(value_to_print)
+            print(value_to_print, end=ending)
+        print()
+    if TARGET not in results and SPRITE_T not in results:
+        global game_over
+        game_over = True
+    else:
+        print()
+
+
+def player_position():
+    """Find player position."""
+    for row in range(len(moving_board)):
+        count = 0
+        for column in moving_board[row]:
+            if column == SPRITE:
+                return row, count
+            count += 1
+
+
+def future_pos(wasd):
+    if wasd == CONTROLS[0]:
+        y, x = player_position()
+        y -= 1
+    elif wasd == CONTROLS[1]:
+        y, x = player_position()
+        x -= 1
+    elif wasd == CONTROLS[2]:
+        y, x = player_position()
+        y += 1
+    elif wasd == CONTROLS[3]:
+        y, x = player_position()
+        x += 1
+    return y, x
+
+
+def future_future_pos(wasd):
+    y, x = future_pos(wasd)
+    if wasd == CONTROLS[0]:
+        y -= 1
+    elif wasd == CONTROLS[1]:
+        x -= 1
+    elif wasd == CONTROLS[2]:
+        y += 1
+    elif wasd == CONTROLS[3]:
+        x += 1
+    return y, x
+
+
+def player_move(wasd):
+    """Move player and print board."""
+    y, x = player_position()
+    fy, fx = future_pos(wasd)
+    fyy, fxx = future_future_pos(wasd)
+    if wasd == CONTROLS[0]:
+        if static_board[fy][fx] == WALL:
+            pass
+        elif moving_board[fy][fx] == EMPTY:
+            moving_board[y][x] = EMPTY
+            moving_board[fy][fx] = SPRITE
+        elif moving_board[fy][fx] == BOX_NS:
+            if (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_NS) or (moving_board[fyy][fxx] == BOX_NS and moving_board[fy][fx] == BOX_NS) or (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_S):
+                pass
+            elif moving_board[fyy][fxx] == EMPTY:
+                moving_board[y][x] = EMPTY
+                moving_board[fy][fx] = SPRITE
+                moving_board[fyy][fxx] = BOX_NS
+    elif wasd == CONTROLS[1]:
+        if static_board[fy][fx] == WALL:
+            pass
+        elif moving_board[fy][fx] == EMPTY:
+            moving_board[y][x] = EMPTY
+            moving_board[fy][fx] = SPRITE
+        elif moving_board[fy][fx] == BOX_NS:
+            if (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_NS) or (moving_board[fyy][fxx] == BOX_NS and moving_board[fy][fx] == BOX_NS) or (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_S):
+                pass
+            elif moving_board[fyy][fxx] == EMPTY:
+                moving_board[y][x] = EMPTY
+                moving_board[fy][fx] = SPRITE
+                moving_board[fyy][fxx] = BOX_NS
+    elif wasd == CONTROLS[2]:
+        if static_board[fy][fx] == WALL:
+            pass
+        elif moving_board[fy][fx] == EMPTY:
+            moving_board[y][x] = EMPTY
+            moving_board[fy][fx] = SPRITE
+        elif moving_board[fy][fx] == BOX_NS:
+            if (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_NS) or (moving_board[fyy][fxx] == BOX_NS and moving_board[fy][fx] == BOX_NS) or (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_S):
+                pass
+            elif moving_board[fyy][fxx] == EMPTY:
+                moving_board[y][x] = EMPTY
+                moving_board[fy][fx] = SPRITE
+                moving_board[fyy][fxx] = BOX_NS
+    elif wasd == CONTROLS[3]:
+        if static_board[fy][fx] == WALL:
+            pass
+        elif moving_board[fy][fx] == EMPTY:
+            moving_board[y][x] = EMPTY
+            moving_board[fy][fx] = SPRITE
+        elif moving_board[fy][fx] == BOX_NS:
+            if (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_NS) or (moving_board[fyy][fxx] == BOX_NS and moving_board[fy][fx] == BOX_NS) or (static_board[fyy][fxx] == WALL and moving_board[fy][fx] == BOX_S):
+                pass
+            elif moving_board[fyy][fxx] == EMPTY:
+                moving_board[y][x] = EMPTY
+                moving_board[fy][fx] = SPRITE
+                moving_board[fyy][fxx] = BOX_NS
+    print_current_board()
+
+
+new_board()
+game_running = True
+print_current_board()
+game_over = ''
+while game_running:
+    move = input()
+    if move == CONTROLS[5]:
+        print('Goodbye')
+        game_running = False
+    elif move == CONTROLS[0] or move == CONTROLS[1] or move == CONTROLS[2] or move == CONTROLS[3]:
+        player_move(move)
+    elif move == CONTROLS[4]:
+        new_board()
+        print_current_board()
+    else:
+        print('enter a valid move:')
+    if game_over:
+        print('You Win!')
+        game_running = False
+
